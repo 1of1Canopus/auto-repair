@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: auto-repair
+
+  datasource:
+    url: jdbc:h2:mem:autorepair;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+  flyway:
+    enabled: true
+
+  h2:
+    console:
+      enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
