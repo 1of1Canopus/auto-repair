@@ -77,14 +77,15 @@ class QuoteServiceTest {
         var job = service.addJob(quote.id(), "Replace brake pads",
                 new BigDecimal("1.5"), new BigDecimal("60.00"), true);
 
-        service.addPart(job.id(), new MechanicalPart(2, new BigDecimal("45.00")));
+        service.addPart(job.id(), MechanicalPart.create("BRK-001", "Brake pad", 2, new BigDecimal("45.00")));
 
         assertThat(service.getQuoteById(quote.id()).jobs().get(0).parts()).hasSize(1);
     }
 
     @Test
     void addPart_throws_when_job_not_found() {
-        assertThatThrownBy(() -> service.addPart(UUID.randomUUID(), new MechanicalPart(1, BigDecimal.TEN)))
+        assertThatThrownBy(() -> service.addPart(UUID.randomUUID(),
+                MechanicalPart.create("BRK-001", "Brake pad", 1, BigDecimal.TEN)))
                 .isInstanceOf(JobNotFoundException.class);
     }
 }

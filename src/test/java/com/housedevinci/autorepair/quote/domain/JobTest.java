@@ -19,8 +19,8 @@ class JobTest {
     @Test
     void price_adds_part_costs_to_labour() {
         List<Part> parts = List.of(
-                new MechanicalPart(2, new BigDecimal("45.00")),
-                new FluidPart(500, new BigDecimal("12.00"))
+                PartFixtures.mechanical(2, new BigDecimal("45.00")),
+                PartFixtures.fluid(500, new BigDecimal("12.00"))
         );
         var job = JobFixtures.job(new BigDecimal("1.0"), new BigDecimal("60.00"), parts, true);
 
@@ -29,7 +29,7 @@ class JobTest {
 
     @Test
     void overridden_price_ignores_labour_and_parts() {
-        List<Part> parts = List.of(new MechanicalPart(10, new BigDecimal("99.00")));
+        List<Part> parts = List.of(PartFixtures.mechanical(10, new BigDecimal("99.00")));
         var job = JobFixtures.jobWithFixedPrice(
                 new BigDecimal("5"), new BigDecimal("80.00"), parts, new BigDecimal("250.00"), true);
 

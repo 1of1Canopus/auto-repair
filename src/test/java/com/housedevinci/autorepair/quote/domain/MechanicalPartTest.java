@@ -10,7 +10,7 @@ class MechanicalPartTest {
 
     @Test
     void total_cost_is_quantity_times_unit_cost() {
-        var part = new MechanicalPart(2, new BigDecimal("45.00"));
+        var part = PartFixtures.mechanical(2, new BigDecimal("45.00"));
 
         assertThat(part.totalCost()).isEqualByComparingTo("90.00");
     }
