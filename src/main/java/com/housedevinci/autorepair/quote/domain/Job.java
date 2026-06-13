@@ -5,15 +5,16 @@ import java.util.List;
 import java.util.Optional;
 
 public record Job(BigDecimal labourTime, BigDecimal labourRate, List<Part> parts,
-                  Optional<BigDecimal> overriddenPrice) {
+                  Optional<BigDecimal> overriddenPrice, boolean isCustomerAuthorized) {
 
-    public static Job of(BigDecimal labourTime, BigDecimal labourRate, List<Part> parts) {
-        return new Job(labourTime, labourRate, parts, Optional.empty());
+    public static Job of(BigDecimal labourTime, BigDecimal labourRate, List<Part> parts,
+                         boolean isCustomerAuthorized) {
+        return new Job(labourTime, labourRate, parts, Optional.empty(), isCustomerAuthorized);
     }
 
-    public static Job withFixedPrice(BigDecimal labourTime, BigDecimal labourRate,
-                                     List<Part> parts, BigDecimal fixedPrice) {
-        return new Job(labourTime, labourRate, parts, Optional.of(fixedPrice));
+    public static Job withFixedPrice(BigDecimal labourTime, BigDecimal labourRate, List<Part> parts,
+                                     BigDecimal fixedPrice, boolean isCustomerAuthorized) {
+        return new Job(labourTime, labourRate, parts, Optional.of(fixedPrice), isCustomerAuthorized);
     }
 
     public BigDecimal price() {
