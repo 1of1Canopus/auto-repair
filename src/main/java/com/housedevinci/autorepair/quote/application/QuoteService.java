@@ -5,6 +5,7 @@ import com.housedevinci.autorepair.quote.application.port.out.QuoteRepository;
 import com.housedevinci.autorepair.quote.domain.Job;
 import com.housedevinci.autorepair.quote.domain.Part;
 import com.housedevinci.autorepair.quote.domain.Quote;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,25 +22,30 @@ public class QuoteService {
         this.jobCodes = jobCodes;
     }
 
+    @Transactional(readOnly = true)
     public List<Quote> getAllQuotes() {
         return quotes.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Quote getQuoteById(UUID id) {
         return quotes.findById(id)
                 .orElseThrow(() -> new QuoteNotFoundException(id));
     }
 
+    @Transactional(readOnly = true)
     public List<Quote> getQuotesByCustomerEmail(String customerEmail) {
         return quotes.findByCustomerEmail(customerEmail);
     }
 
+    @Transactional
     public Quote createQuote(String customerName, String customerEmail,
                              String vrm, String vehicleDescription, int mileage) {
         return quotes.save(
                 Quote.create(customerName, customerEmail, vrm, vehicleDescription, mileage));
     }
 
+    @Transactional
     public Job addJob(UUID quoteId, String jobDescription, BigDecimal labourTime,
                       BigDecimal labourRate, boolean isCustomerAuthorized,
                       Optional<BigDecimal> overriddenPrice) {
@@ -55,6 +61,7 @@ public class QuoteService {
         return job;
     }
 
+    @Transactional
     public void addPart(UUID jobId, Part part) {
         Quote quote = quotes.findByJobId(jobId)
                 .orElseThrow(() -> new JobNotFoundException(jobId));
