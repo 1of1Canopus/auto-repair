@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public record QuoteResponse(UUID id, String customerName, String customerEmail, String vrm,
-                            String vehicleDescription, int mileage, BigDecimal total,
+public record QuoteResponse(UUID id, UUID customerId, String customerName, String customerEmail,
+                            String vrm, String vehicleDescription, int mileage, BigDecimal total,
                             List<JobResponse> jobs) {
 }

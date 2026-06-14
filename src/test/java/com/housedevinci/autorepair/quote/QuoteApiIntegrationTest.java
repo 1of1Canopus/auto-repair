@@ -29,8 +29,9 @@ class QuoteApiIntegrationTest {
         String quoteBody = mockMvc.perform(post("/api/v1/quotes")
                         .contentType(APPLICATION_JSON)
                         .content("""
-                                {"customerName":"Alice","customerEmail":"alice@example.com",
-                                 "vrm":"AA11AAA","vehicleDescription":"Audi A3","mileage":1000}
+                                {"customerId":"44444444-4444-4444-4444-444444444444","customerName":"Alice",
+                                 "customerEmail":"alice@example.com","vrm":"AA11AAA",
+                                 "vehicleDescription":"Audi A3","mileage":1000}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
@@ -65,6 +66,7 @@ class QuoteApiIntegrationTest {
         mockMvc.perform(get("/api/v1/quotes/{id}", quoteId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customerName").value("Alice"))
+                .andExpect(jsonPath("$.customerId").value("44444444-4444-4444-4444-444444444444"))
                 .andExpect(jsonPath("$.jobs", hasSize(1)))
                 .andExpect(jsonPath("$.jobs[0].parts", hasSize(2)))
                 .andExpect(jsonPath("$.jobs[0].price").value(186.00))

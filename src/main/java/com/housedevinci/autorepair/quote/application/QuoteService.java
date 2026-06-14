@@ -39,10 +39,10 @@ public class QuoteService {
     }
 
     @Transactional
-    public Quote createQuote(String customerName, String customerEmail,
+    public Quote createQuote(UUID customerId, String customerName, String customerEmail,
                              String vrm, String vehicleDescription, int mileage) {
         return quotes.save(
-                Quote.create(customerName, customerEmail, vrm, vehicleDescription, mileage));
+                Quote.create(customerId, customerName, customerEmail, vrm, vehicleDescription, mileage));
     }
 
     @Transactional

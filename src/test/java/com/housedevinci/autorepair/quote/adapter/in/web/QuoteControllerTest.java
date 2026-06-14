@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,7 +46,7 @@ class QuoteControllerTest {
         var job = new Job(UUID.randomUUID(), "JOB000001", "Replace brakes",
                 new BigDecimal("1.5"), new BigDecimal("60.00"), List.of(mechanical, fluid),
                 Optional.empty(), true);
-        var quote = new Quote(UUID.randomUUID(), "Alice", "alice@example.com",
+        var quote = new Quote(UUID.randomUUID(), UUID.randomUUID(), "Alice", "alice@example.com",
                 "AA11AAA", "Audi A3", 1000, List.of(job));
         when(quoteService.getQuoteById(quote.id())).thenReturn(quote);
 
@@ -71,7 +72,7 @@ class QuoteControllerTest {
 
     @Test
     void get_quotes_filters_by_customer_email() throws Exception {
-        var quote = new Quote(UUID.randomUUID(), "Alice", "alice@example.com",
+        var quote = new Quote(UUID.randomUUID(), UUID.randomUUID(), "Alice", "alice@example.com",
                 "AA11AAA", "Audi A3", 1000, List.of());
         when(quoteService.getQuotesByCustomerEmail("alice@example.com")).thenReturn(List.of(quote));
 
@@ -83,16 +84,16 @@ class QuoteControllerTest {
 
     @Test
     void create_quote_returns_201_with_location() throws Exception {
-        var created = new Quote(UUID.randomUUID(), "Bob", "bob@example.com",
+        var created = new Quote(UUID.randomUUID(), UUID.randomUUID(), "Bob", "bob@example.com",
                 "BB22BBB", "BMW 1", 2000, List.of());
-        when(quoteService.createQuote("Bob", "bob@example.com", "BB22BBB", "BMW 1", 2000))
+        when(quoteService.createQuote(any(), any(), any(), any(), any(), anyInt()))
                 .thenReturn(created);
 
         mockMvc.perform(post("/api/v1/quotes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"customerName":"Bob","customerEmail":"bob@example.com",
-                                 "vrm":"BB22BBB","vehicleDescription":"BMW 1","mileage":2000}
+                                {"customerId":"33333333-3333-3333-3333-333333333333","customerName":"Bob",
+                                 "customerEmail":"bob@example.com","vrm":"BB22BBB","vehicleDescription":"BMW 1","mileage":2000}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/quotes/" + created.id()))
@@ -104,8 +105,8 @@ class QuoteControllerTest {
         mockMvc.perform(post("/api/v1/quotes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"customerName":"Bob","customerEmail":"not-an-email",
-                                 "vrm":"BB22BBB","vehicleDescription":"BMW 1","mileage":2000}
+                                {"customerId":"33333333-3333-3333-3333-333333333333","customerName":"Bob",
+                                 "customerEmail":"not-an-email","vrm":"BB22BBB","vehicleDescription":"BMW 1","mileage":2000}
                                 """))
                 .andExpect(status().isBadRequest());
     }

@@ -19,6 +19,9 @@ public class QuoteEntity {
     @Id
     private UUID id;
 
+    @Column(name = "customer_id", nullable = false)
+    private UUID customerId;
+
     @Column(name = "customer_name", nullable = false)
     private String customerName;
 
@@ -43,9 +46,10 @@ public class QuoteEntity {
     protected QuoteEntity() {
     }
 
-    public QuoteEntity(UUID id, String customerName, String customerEmail, String vrm,
+    public QuoteEntity(UUID id, UUID customerId, String customerName, String customerEmail, String vrm,
                        String vehicleDescription, int mileage, Instant dateCreated) {
         this.id = id;
+        this.customerId = customerId;
         this.customerName = customerName;
         this.customerEmail = customerEmail;
         this.vrm = vrm;
@@ -61,6 +65,10 @@ public class QuoteEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
     }
 
     public String getCustomerName() {

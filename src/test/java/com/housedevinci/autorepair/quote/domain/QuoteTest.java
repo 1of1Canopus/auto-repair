@@ -32,7 +32,7 @@ class QuoteTest {
     }
 
     private static Quote quoteWith(Job... jobs) {
-        return new Quote(UUID.randomUUID(), "Test Customer", "test@example.com",
+        return new Quote(UUID.randomUUID(), UUID.randomUUID(), "Test Customer", "test@example.com",
                 "AB12CDE", "Test Vehicle", 0, List.of(jobs));
     }
 }

@@ -26,7 +26,7 @@ class QuoteServiceTest {
 
     @Test
     void createQuote_stores_a_new_quote_with_no_jobs() {
-        var created = service.createQuote(
+        var created = service.createQuote(UUID.randomUUID(),
                 "Jane Doe", "jane@example.com", "AB12CDE", "Ford Focus", 45000);
 
         assertThat(created.id()).isNotNull();
@@ -36,16 +36,16 @@ class QuoteServiceTest {
 
     @Test
     void getAllQuotes_returns_every_stored_quote() {
-        service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
-        service.createQuote("Bob", "bob@example.com", "BB22BBB", "BMW 1", 2000);
+        service.createQuote(UUID.randomUUID(),"Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
+        service.createQuote(UUID.randomUUID(),"Bob", "bob@example.com", "BB22BBB", "BMW 1", 2000);
 
         assertThat(service.getAllQuotes()).hasSize(2);
     }
 
     @Test
     void getQuotesByCustomerEmail_returns_only_matching_quotes() {
-        service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
-        service.createQuote("Bob", "bob@example.com", "BB22BBB", "BMW 1", 2000);
+        service.createQuote(UUID.randomUUID(),"Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
+        service.createQuote(UUID.randomUUID(),"Bob", "bob@example.com", "BB22BBB", "BMW 1", 2000);
 
         assertThat(service.getQuotesByCustomerEmail("alice@example.com"))
                 .singleElement()
@@ -55,7 +55,7 @@ class QuoteServiceTest {
 
     @Test
     void addJob_adds_a_generated_job_to_the_quote() {
-        var quote = service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
+        var quote = service.createQuote(UUID.randomUUID(),"Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
 
         var job = service.addJob(quote.id(), "Replace brake pads",
                 new BigDecimal("1.5"), new BigDecimal("60.00"), true, Optional.empty());
@@ -67,7 +67,7 @@ class QuoteServiceTest {
 
     @Test
     void addJob_with_overridden_price_uses_the_fixed_price() {
-        var quote = service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
+        var quote = service.createQuote(UUID.randomUUID(),"Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
 
         var job = service.addJob(quote.id(), "Diagnostic", new BigDecimal("2"),
                 new BigDecimal("80.00"), true, Optional.of(new BigDecimal("99.00")));
@@ -84,7 +84,7 @@ class QuoteServiceTest {
 
     @Test
     void addPart_adds_a_part_to_the_job() {
-        var quote = service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
+        var quote = service.createQuote(UUID.randomUUID(),"Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
         var job = service.addJob(quote.id(), "Replace brake pads",
                 new BigDecimal("1.5"), new BigDecimal("60.00"), true, Optional.empty());
 

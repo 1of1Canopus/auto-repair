@@ -1,5 +1,6 @@
 CREATE TABLE quotes (
     id                  CHAR(36) PRIMARY KEY,
+    customer_id         CHAR(36)     NOT NULL,
     customer_name       VARCHAR(255) NOT NULL,
     customer_email      VARCHAR(255) NOT NULL,
     vrm                 VARCHAR(32)  NOT NULL,

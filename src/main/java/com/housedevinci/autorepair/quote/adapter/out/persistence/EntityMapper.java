@@ -20,8 +20,8 @@ public class EntityMapper {
 
     public QuoteEntity toEntity(Quote quote) {
         Instant now = Instant.now();
-        QuoteEntity entity = new QuoteEntity(quote.id(), quote.customerName(), quote.customerEmail(),
-                quote.vrm(), quote.vehicleDescription(), quote.mileage(), now);
+        QuoteEntity entity = new QuoteEntity(quote.id(), quote.customerId(), quote.customerName(),
+                quote.customerEmail(), quote.vrm(), quote.vehicleDescription(), quote.mileage(), now);
         quote.jobs().forEach(job -> entity.addJob(toEntity(job, now)));
         return entity;
     }
@@ -45,8 +45,9 @@ public class EntityMapper {
 
     public Quote toDomain(QuoteEntity entity) {
         List<Job> jobs = entity.getJobs().stream().map(this::toDomain).toList();
-        return new Quote(entity.getId(), entity.getCustomerName(), entity.getCustomerEmail(),
-                entity.getVrm(), entity.getVehicleDescription(), entity.getMileage(), jobs);
+        return new Quote(entity.getId(), entity.getCustomerId(), entity.getCustomerName(),
+                entity.getCustomerEmail(), entity.getVrm(), entity.getVehicleDescription(),
+                entity.getMileage(), jobs);
     }
 
     private Job toDomain(JobEntity entity) {

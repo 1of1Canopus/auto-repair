@@ -29,13 +29,15 @@ class QuoteRepositoryAdapterTest {
         var job = new Job(UUID.randomUUID(), "JOB000001", "Replace brakes",
                 new BigDecimal("1.5"), new BigDecimal("60.00"), List.of(mechanical, fluid),
                 Optional.empty(), true);
-        var quote = new Quote(UUID.randomUUID(), "Alice", "alice@example.com",
+        var customerId = UUID.randomUUID();
+        var quote = new Quote(UUID.randomUUID(), customerId, "Alice", "alice@example.com",
                 "AA11AAA", "Audi A3", 1000, List.of(job));
 
         quotes.save(quote);
 
         var reloaded = quotes.findById(quote.id()).orElseThrow();
         assertThat(reloaded.customerName()).isEqualTo("Alice");
+        assertThat(reloaded.customerId()).isEqualTo(customerId);
         assertThat(reloaded.jobs()).hasSize(1);
         assertThat(reloaded.jobs().get(0).jobCode()).isEqualTo("JOB000001");
         assertThat(reloaded.jobs().get(0).parts()).hasSize(2);

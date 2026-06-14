@@ -45,8 +45,8 @@ public class QuoteController {
 
     @PostMapping
     public ResponseEntity<QuoteResponse> create(@Valid @RequestBody CreateQuoteRequest request) {
-        Quote quote = quoteService.createQuote(request.customerName(), request.customerEmail(),
-                request.vrm(), request.vehicleDescription(), request.mileage());
+        Quote quote = quoteService.createQuote(request.customerId(), request.customerName(),
+                request.customerEmail(), request.vrm(), request.vehicleDescription(), request.mileage());
         return ResponseEntity
                 .created(URI.create("/api/v1/quotes/" + quote.id()))
                 .body(mapper.toResponse(quote));

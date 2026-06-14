@@ -17,8 +17,9 @@ public class WebMapper {
 
     public QuoteResponse toResponse(Quote quote) {
         List<JobResponse> jobs = quote.jobs().stream().map(this::toResponse).toList();
-        return new QuoteResponse(quote.id(), quote.customerName(), quote.customerEmail(),
-                quote.vrm(), quote.vehicleDescription(), quote.mileage(), quote.total(), jobs);
+        return new QuoteResponse(quote.id(), quote.customerId(), quote.customerName(),
+                quote.customerEmail(), quote.vrm(), quote.vehicleDescription(), quote.mileage(),
+                quote.total(), jobs);
     }
 
     public JobResponse toResponse(Job job) {

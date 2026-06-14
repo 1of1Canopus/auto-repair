@@ -5,19 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public record Quote(UUID id, String customerName, String customerEmail,
+public record Quote(UUID id, UUID customerId, String customerName, String customerEmail,
                     String vrm, String vehicleDescription, int mileage, List<Job> jobs) {
 
-    public static Quote create(String customerName, String customerEmail,
+    public static Quote create(UUID customerId, String customerName, String customerEmail,
                                String vrm, String vehicleDescription, int mileage) {
-        return new Quote(UUID.randomUUID(), customerName, customerEmail,
+        return new Quote(UUID.randomUUID(), customerId, customerName, customerEmail,
                 vrm, vehicleDescription, mileage, List.of());
     }
 
     public Quote addJob(Job job) {
         var updatedJobs = new ArrayList<>(jobs);
         updatedJobs.add(job);
-        return new Quote(id, customerName, customerEmail,
+        return new Quote(id, customerId, customerName, customerEmail,
                 vrm, vehicleDescription, mileage, List.copyOf(updatedJobs));
     }
 
@@ -25,7 +25,7 @@ public record Quote(UUID id, String customerName, String customerEmail,
         var updatedJobs = jobs.stream()
                 .map(job -> job.id().equals(jobId) ? job.withPart(part) : job)
                 .toList();
-        return new Quote(id, customerName, customerEmail,
+        return new Quote(id, customerId, customerName, customerEmail,
                 vrm, vehicleDescription, mileage, updatedJobs);
     }
 
