@@ -8,6 +8,7 @@ import com.housedevinci.autorepair.quote.domain.Quote;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class QuoteService {
@@ -39,12 +40,17 @@ public class QuoteService {
                 Quote.create(customerName, customerEmail, vrm, vehicleDescription, mileage));
     }
 
-    public Job addJob(UUID quoteId, String jobDescription,
-                      BigDecimal labourTime, BigDecimal labourRate, boolean isCustomerAuthorized) {
+    public Job addJob(UUID quoteId, String jobDescription, BigDecimal labourTime,
+                      BigDecimal labourRate, boolean isCustomerAuthorized,
+                      Optional<BigDecimal> overriddenPrice) {
         Quote quote = quotes.findById(quoteId)
                 .orElseThrow(() -> new QuoteNotFoundException(quoteId));
-        Job job = Job.create(jobCodes.generate(), jobDescription,
-                labourTime, labourRate, isCustomerAuthorized);
+        String jobCode = jobCodes.generate();
+        Job job = overriddenPrice
+                .map(price -> Job.createWithFixedPrice(jobCode, jobDescription,
+                        labourTime, labourRate, price, isCustomerAuthorized))
+                .orElseGet(() -> Job.create(jobCode, jobDescription,
+                        labourTime, labourRate, isCustomerAuthorized));
         quotes.save(quote.addJob(job));
         return job;
     }

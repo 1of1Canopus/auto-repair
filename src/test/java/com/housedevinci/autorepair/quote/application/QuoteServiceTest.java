@@ -6,6 +6,7 @@ import com.housedevinci.autorepair.quote.domain.Quote;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,7 +58,7 @@ class QuoteServiceTest {
         var quote = service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
 
         var job = service.addJob(quote.id(), "Replace brake pads",
-                new BigDecimal("1.5"), new BigDecimal("60.00"), true);
+                new BigDecimal("1.5"), new BigDecimal("60.00"), true, Optional.empty());
 
         assertThat(job.id()).isNotNull();
         assertThat(job.jobCode()).isEqualTo("JOB000001");
@@ -65,9 +66,19 @@ class QuoteServiceTest {
     }
 
     @Test
+    void addJob_with_overridden_price_uses_the_fixed_price() {
+        var quote = service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
+
+        var job = service.addJob(quote.id(), "Diagnostic", new BigDecimal("2"),
+                new BigDecimal("80.00"), true, Optional.of(new BigDecimal("99.00")));
+
+        assertThat(job.price()).isEqualByComparingTo("99.00");
+    }
+
+    @Test
     void addJob_throws_when_quote_not_found() {
         assertThatThrownBy(() -> service.addJob(UUID.randomUUID(), "x",
-                BigDecimal.ONE, BigDecimal.TEN, true))
+                BigDecimal.ONE, BigDecimal.TEN, true, Optional.empty()))
                 .isInstanceOf(QuoteNotFoundException.class);
     }
 
@@ -75,7 +86,7 @@ class QuoteServiceTest {
     void addPart_adds_a_part_to_the_job() {
         var quote = service.createQuote("Alice", "alice@example.com", "AA11AAA", "Audi A3", 1000);
         var job = service.addJob(quote.id(), "Replace brake pads",
-                new BigDecimal("1.5"), new BigDecimal("60.00"), true);
+                new BigDecimal("1.5"), new BigDecimal("60.00"), true, Optional.empty());
 
         service.addPart(job.id(), MechanicalPart.create("BRK-001", "Brake pad", 2, new BigDecimal("45.00")));
 

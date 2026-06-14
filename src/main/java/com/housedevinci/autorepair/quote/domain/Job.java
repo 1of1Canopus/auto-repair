@@ -17,6 +17,13 @@ public record Job(UUID id, String jobCode, String jobDescription,
                 List.of(), Optional.empty(), isCustomerAuthorized);
     }
 
+    public static Job createWithFixedPrice(String jobCode, String jobDescription,
+                                           BigDecimal labourTime, BigDecimal labourRate,
+                                           BigDecimal fixedPrice, boolean isCustomerAuthorized) {
+        return new Job(UUID.randomUUID(), jobCode, jobDescription, labourTime, labourRate,
+                List.of(), Optional.of(fixedPrice), isCustomerAuthorized);
+    }
+
     public Job withPart(Part part) {
         var updatedParts = new ArrayList<>(parts);
         updatedParts.add(part);
