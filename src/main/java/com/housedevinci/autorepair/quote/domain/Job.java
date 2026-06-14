@@ -1,6 +1,7 @@
 package com.housedevinci.autorepair.quote.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,7 @@ public record Job(UUID id, String jobCode, String jobDescription,
     }
 
     public BigDecimal price() {
-        return overriddenPrice.orElseGet(this::calculatedPrice);
+        return overriddenPrice.orElseGet(this::calculatedPrice).setScale(2, RoundingMode.HALF_UP);
     }
 
     private BigDecimal calculatedPrice() {

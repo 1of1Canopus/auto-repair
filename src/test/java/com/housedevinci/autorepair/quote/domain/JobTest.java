@@ -28,6 +28,13 @@ class JobTest {
     }
 
     @Test
+    void price_is_rounded_to_the_cent() {
+        var job = JobFixtures.job(new BigDecimal("1.25"), new BigDecimal("55.50"), List.of(), true);
+
+        assertThat(job.price()).isEqualByComparingTo("69.38");
+    }
+
+    @Test
     void overridden_price_ignores_labour_and_parts() {
         List<Part> parts = List.of(PartFixtures.mechanical(10, new BigDecimal("99.00")));
         var job = JobFixtures.jobWithFixedPrice(
