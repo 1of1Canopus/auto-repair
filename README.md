@@ -8,21 +8,26 @@ A RESTful API for managing vehicle repair quotes — quotes, jobs and parts — 
 ## Quick start
 
 ### Prerequisites
-- **Java 21** (the build targets 21 — make sure `JAVA_HOME` points to a JDK 21)
-- **Maven 3.9+**
+- **Java 21** — make sure `JAVA_HOME` points to a JDK 21. Maven is bundled via the wrapper (`./mvnw`).
 
 ### Run the app
 ```bash
 # from the project root
-JAVA_HOME=/path/to/jdk-21 mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 The app starts on **http://localhost:8080** with **sample data preloaded** (two quotes, with jobs and a
 mix of mechanical/fluid parts, a fixed-price job, and an unauthorised job).
 
 Or build and run the jar:
 ```bash
-JAVA_HOME=/path/to/jdk-21 mvn clean package
+./mvnw clean package
 java -jar target/auto-repair-0.0.1-SNAPSHOT.jar
+```
+
+Or with Docker:
+```bash
+docker build -t auto-repair .
+docker run -p 8080:8080 auto-repair          # runs on in-memory H2
 ```
 
 ### Explore it
@@ -33,7 +38,27 @@ java -jar target/auto-repair-0.0.1-SNAPSHOT.jar
 
 ### Run the tests
 ```bash
-JAVA_HOME=/path/to/jdk-21 mvn test
+./mvnw test
+```
+
+### Try it (curl)
+```bash
+# 1. create a quote -> returns an "id"
+curl -s -X POST localhost:8080/api/v1/quotes -H 'Content-Type: application/json' \
+  -d '{"customerName":"Alice","customerEmail":"alice@example.com","vrm":"AB12CDE","vehicleDescription":"Audi A3","mileage":84000}'
+
+# 2. add a job to that quote -> returns a job "id"
+curl -s -X POST localhost:8080/api/v1/quotes/<quoteId>/jobs -H 'Content-Type: application/json' \
+  -d '{"jobDescription":"Replace front brakes","labourTime":1.5,"labourRate":60.00,"customerAuthorized":true}'
+
+# 3. add parts to the job (polymorphic by "type")
+curl -s -X POST localhost:8080/api/v1/jobs/<jobId>/parts -H 'Content-Type: application/json' \
+  -d '{"type":"MECHANICAL","partNumber":"BRK-001","partDescription":"Brake pad","quantity":2,"unitCost":45.00}'
+curl -s -X POST localhost:8080/api/v1/jobs/<jobId>/parts -H 'Content-Type: application/json' \
+  -d '{"type":"FLUID","partNumber":"OIL-001","partDescription":"Brake fluid","quantity":500,"unitCost":12.00}'
+
+# 4. read it back with the computed total
+curl -s localhost:8080/api/v1/quotes/<quoteId>
 ```
 
 ---
@@ -102,8 +127,21 @@ persistence boundary. The domain imports no Spring/JPA, so all business logic is
 - **H2 behind a port.** Zero-friction to run; moving to PostgreSQL is a new adapter + config with the
   domain untouched. Testcontainers would be the production test approach.
 - **RFC-7807 `ProblemDetail`** for errors — built into Spring, no extra dependency.
+- **Vendor-portable ids:** UUIDs are stored as `CHAR(36)` (one Hibernate setting), so the *same* schema
+  boots on H2, MySQL **or** PostgreSQL — no native-`UUID` lock-in. `BINARY(16)` would be more compact but
+  its DDL differs per vendor; portability wins here.
+- **Transactions at the use case:** `@Transactional` lives on the application service (the unit of work),
+  so each create/add is one atomic read-modify-write — not two separate transactions.
 - **Restraint over showmanship:** no Lombok, no MapStruct, no Spring Security, no HATEOAS — each is
   justifiable at scale, none here.
+
+## Deployment
+- **Container:** multi-stage `Dockerfile` (JRE 21, non-root) — runs as-is on ECS Fargate.
+- **Config:** a `prod` profile reads the datasource from env (`DB_URL`/`DB_USERNAME`/`DB_PASSWORD`) and
+  switches `ddl-auto` to `validate` (Flyway owns the schema). The same image points at RDS by setting env
+  vars: `SPRING_PROFILES_ACTIVE=prod` + the DB vars.
+- **Health:** `/actuator/health` is the container health check.
+- Sample data only loads under the local (default) profile — never in `prod` or tests.
 
 ## What I'd add given more time
 - AuthN/AuthZ (OAuth2 resource server), pagination, idempotency keys on `POST`s

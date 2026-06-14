@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
-@Profile("!test")
+@Profile("default")
 public class SampleDataLoader implements ApplicationRunner {
 
     private final QuoteService quoteService;

@@ -1,5 +1,5 @@
 CREATE TABLE quotes (
-    id                  UUID PRIMARY KEY,
+    id                  CHAR(36) PRIMARY KEY,
     customer_name       VARCHAR(255) NOT NULL,
     customer_email      VARCHAR(255) NOT NULL,
     vrm                 VARCHAR(32)  NOT NULL,
@@ -9,8 +9,8 @@ CREATE TABLE quotes (
 );
 
 CREATE TABLE jobs (
-    id                  UUID PRIMARY KEY,
-    quote_id            UUID          NOT NULL REFERENCES quotes (id),
+    id                  CHAR(36) PRIMARY KEY,
+    quote_id            CHAR(36)      NOT NULL REFERENCES quotes (id),
     job_code            VARCHAR(16)   NOT NULL UNIQUE,
     job_description     VARCHAR(255)  NOT NULL,
     labour_time         NUMERIC(10, 2) NOT NULL,
@@ -21,8 +21,8 @@ CREATE TABLE jobs (
 );
 
 CREATE TABLE parts (
-    id               UUID PRIMARY KEY,
-    job_id           UUID           NOT NULL REFERENCES jobs (id),
+    id               CHAR(36) PRIMARY KEY,
+    job_id           CHAR(36)       NOT NULL REFERENCES jobs (id),
     type             VARCHAR(16)    NOT NULL,
     part_number      VARCHAR(64)    NOT NULL,
     part_description VARCHAR(255)   NOT NULL,
