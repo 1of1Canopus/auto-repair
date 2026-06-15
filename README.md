@@ -8,7 +8,8 @@ A RESTful API for managing vehicle repair quotes — quotes, jobs and parts — 
 ## Quick start
 
 ### Prerequisites
-- **Java 21** — make sure `JAVA_HOME` points to a JDK 21. Maven is bundled via the wrapper (`./mvnw`).
+- **Java 21.** Maven is bundled via the wrapper (`./mvnw`), so JDK 21 is the only requirement — point
+  `JAVA_HOME` at a JDK 21 (`export JAVA_HOME=$(/usr/libexec/java_home -v 21)` on macOS).
 
 ### Run the app
 ```bash
